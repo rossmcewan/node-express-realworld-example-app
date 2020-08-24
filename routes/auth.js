@@ -22,8 +22,8 @@ const getPublicKeys = async (issuer) => {
 };
 
 const secret = (req, header, payload, callback) => {
-  if (payload.iss) {
-    console.log('have payload.iss');
+  if (payload && payload.iss) {
+    console.log("have payload.iss");
     getPublicKeys(payload.iss).then((publicKeys) => {
       const key = publicKeys[header.kid];
       if (!key) {
@@ -31,8 +31,8 @@ const secret = (req, header, payload, callback) => {
       }
       return callback(null, key.pem);
     });
-  }else{
-    console.log('no payload.iss');
+  } else {
+    console.log("no payload.iss");
     return callback(null, config.secret);
   }
 };
