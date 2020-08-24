@@ -4,14 +4,14 @@ var Axios = require('axios')
 var jsonwebtoken = require('jsonwebtoken');
 const jwkToPem = require('jwk-to-pem');
 
-const cacheKeys = undefined;
+let cacheKeys = undefined;
 
 const getPublicKeys = async (issuer)=>{
   if(!cacheKeys){
     const url = `${issuer}/.well-known/jwks.json`
     const publicKeys = await Axios.default.get(url);
     cacheKeys = publicKeys.data.keys.reduce((agg, current) => {
-      let pem = jwkToPem(current);
+      const pem = jwkToPem(current);
       agg[current.kid] = {instance: current, pem};
       return agg;
     },{});
@@ -28,7 +28,7 @@ const secret = (req, header, payload, callback)=>{
   console.log('header', header);
   console.log('payload', payload);
   getPublicKeys(payload.iss).then(publicKeys=>{
-    let key = publicKeys[header.kid];
+    const key = publicKeys[header.kid];
     if(!key){
       throw new Error('claim made for unknown kid')
     }
