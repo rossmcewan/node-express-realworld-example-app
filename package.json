@@ -25,6 +25,7 @@
     "express-jwt": "3.3.0",
     "express-session": "1.13.0",
     "jsonwebtoken": "7.1.9",
+    "jwk-to-pem": "^2.0.4",
     "method-override": "2.3.5",
     "methods": "1.1.2",
     "mongoose": "^5.10.0",
