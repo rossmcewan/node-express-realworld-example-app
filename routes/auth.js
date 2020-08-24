@@ -29,11 +29,11 @@ const secret = (req, header, payload, callback) => {
       if (!key) {
         throw new Error("claim made for unknown kid");
       }
-      return callback(key.pem);
+      return callback(null, key.pem);
     });
   }else{
     console.log('no payload.iss');
-    return callback(config.secret);
+    return callback(null, config.secret);
   }
 };
 
