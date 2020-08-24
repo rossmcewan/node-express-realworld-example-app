@@ -101,13 +101,13 @@ const getUserById = async (id) => {
   return User.findById(id);
 };
 
-const getUserByUsername = async (username) => {
-  return User.findOne({ username });
+const getUserByEmail = async (email) => {
+  return User.findOne({ email });
 };
 
 const getUser = async (req)=>{
   if (req.payload.iss) {
-    return getUserByUsername(req.payload.username);
+    return getUserByEmail(req.payload.username);
   } else {
     return getUserById(req.payload.id);
   }
