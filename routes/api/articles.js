@@ -87,6 +87,7 @@ router.get('/', auth.optional, function(req, res, next) {
 });
 
 router.get('/feed', auth.required, function(req, res, next) {
+  console.log('FEED', req);
   var limit = 20;
   var offset = 0;
 
