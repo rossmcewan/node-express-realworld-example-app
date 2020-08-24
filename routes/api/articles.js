@@ -98,10 +98,12 @@ router.get("/", auth.optional, function (req, res, next) {
 });
 
 const getUserById = async (id) => {
+  console.log('FIND BY USER ID', id);
   return User.findById(id);
 };
 
 const getUserByEmail = async (email) => {
+  console.log('FIND BY EMAIL', email);
   return User.findOne({ email });
 };
 
@@ -119,10 +121,10 @@ router.get("/feed", auth.required, function (req, res, next) {
   }
 
   let getUser;
-  if (req.payload.id) {
-    getUser = getUserById.bind(req.payload.id);
-  } else {
+  if(req.payload.iss){
     getUser = getUserByEmail.bind(req.payload.username);
+  } else {
+    getUser = getUserById.bind(req.payload.id);
   }
 
   getUser().then(function (user) {
