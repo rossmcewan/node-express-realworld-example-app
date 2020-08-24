@@ -33,7 +33,7 @@ const secret = (req, header, payload, callback) => {
     });
   } else {
     console.log("no payload.iss");
-    return callback(null, config.secret);
+    return callback(null, configSecret);
   }
 };
 
