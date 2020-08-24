@@ -122,6 +122,8 @@ router.get("/feed", auth.required, function (req, res, next) {
 
   let getUser;
   if(req.payload.iss){
+    console.log('req.payload', req.payload);
+    console.log('req.payload.username', req.payload.username)
     getUser = getUserByEmail.bind(req.payload.username);
   } else {
     getUser = getUserById.bind(req.payload.id);
