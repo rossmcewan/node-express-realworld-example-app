@@ -106,6 +106,7 @@ const getUserByEmail = async (email) => {
 };
 
 const getUser = async (req)=>{
+  console.log('req.payload', req.payload)
   if (req.payload.iss) {
     return getUserByEmail(req.payload.username);
   } else {
