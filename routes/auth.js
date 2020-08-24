@@ -2,6 +2,7 @@ var jwt = require('express-jwt');
 var configSecret = require('../config').secret;
 var Axios = require('axios')
 var jsonwebtoken = require('jsonwebtoken');
+const jwkToPem = require('jwk-to-pem');
 
 const cacheKeys = undefined;
 
