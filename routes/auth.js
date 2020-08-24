@@ -22,9 +22,11 @@ const getPublicKeys = async (issuer)=>{
 }
 
 const secret = (req, header, payload, callback)=>{
-  console.log('req', JSON.stringify(req));
-  console.log('header', JSON.stringify(header));
-  console.log('payload', JSON.stringify(payload));
+  console.log('req', req);
+  console.log('req.headers', req.headers);
+  console.log('req.header', req.header);
+  console.log('header', header);
+  console.log('payload', payload);
   return callback(configSecret)
 }
 
