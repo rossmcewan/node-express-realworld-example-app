@@ -80,7 +80,7 @@ router.get("/", auth.optional, function (req, res, next) {
           .populate("author")
           .exec(),
         Article.count(query).exec(),
-        req.payload ? User.findById(req.payload.id) : null,
+        req.payload ? getUser(req) : null,
       ]).then(function (results) {
         var articles = results[0];
         var articlesCount = results[1];
@@ -98,14 +98,20 @@ router.get("/", auth.optional, function (req, res, next) {
 });
 
 const getUserById = async (id) => {
-  console.log('FIND BY USER ID', id);
   return User.findById(id);
 };
 
 const getUserByEmail = async (email) => {
-  console.log('FIND BY EMAIL', email);
   return User.findOne({ email });
 };
+
+const getUser = async (req)=>{
+  if (req.payload.iss) {
+    return getUserByEmail(req.payload.username);
+  } else {
+    return getUserById(req.payload.id);
+  }
+}
 
 router.get("/feed", auth.required, function (req, res, next) {
   console.log("FEED", req);
@@ -120,16 +126,8 @@ router.get("/feed", auth.required, function (req, res, next) {
     offset = req.query.offset;
   }
 
-  let getUser;
-  if(req.payload.iss){
-    console.log('req.payload', req.payload);
-    console.log('req.payload.username', req.payload.username)
-    getUser = ()=>getUserByEmail(req.payload.username);
-  } else {
-    getUser = ()=>getUserById(req.payload.id);
-  }
 
-  getUser().then(function (user) {
+  getUser(req).then(function (user) {
     if (!user) {
       return res.sendStatus(401);
     }
@@ -158,7 +156,7 @@ router.get("/feed", auth.required, function (req, res, next) {
 });
 
 router.post("/", auth.required, function (req, res, next) {
-  User.findById(req.payload.id)
+  getUser(req)
     .then(function (user) {
       if (!user) {
         return res.sendStatus(401);
@@ -179,7 +177,7 @@ router.post("/", auth.required, function (req, res, next) {
 // return a article
 router.get("/:article", auth.optional, function (req, res, next) {
   Promise.all([
-    req.payload ? User.findById(req.payload.id) : null,
+    req.payload ? getUser(req) : null,
     req.article.populate("author").execPopulate(),
   ])
     .then(function (results) {
@@ -192,7 +190,7 @@ router.get("/:article", auth.optional, function (req, res, next) {
 
 // update article
 router.put("/:article", auth.required, function (req, res, next) {
-  User.findById(req.payload.id).then(function (user) {
+  getUser(req).then(function (user) {
     if (req.article.author._id.toString() === req.payload.id.toString()) {
       if (typeof req.body.article.title !== "undefined") {
         req.article.title = req.body.article.title;
@@ -224,7 +222,7 @@ router.put("/:article", auth.required, function (req, res, next) {
 
 // delete article
 router.delete("/:article", auth.required, function (req, res, next) {
-  User.findById(req.payload.id)
+  getUser(req)
     .then(function (user) {
       if (!user) {
         return res.sendStatus(401);
@@ -245,7 +243,7 @@ router.delete("/:article", auth.required, function (req, res, next) {
 router.post("/:article/favorite", auth.required, function (req, res, next) {
   var articleId = req.article._id;
 
-  User.findById(req.payload.id)
+  getUser(req)
     .then(function (user) {
       if (!user) {
         return res.sendStatus(401);
@@ -264,7 +262,7 @@ router.post("/:article/favorite", auth.required, function (req, res, next) {
 router.delete("/:article/favorite", auth.required, function (req, res, next) {
   var articleId = req.article._id;
 
-  User.findById(req.payload.id)
+  getUser(req)
     .then(function (user) {
       if (!user) {
         return res.sendStatus(401);
@@ -281,7 +279,7 @@ router.delete("/:article/favorite", auth.required, function (req, res, next) {
 
 // return an article's comments
 router.get("/:article/comments", auth.optional, function (req, res, next) {
-  Promise.resolve(req.payload ? User.findById(req.payload.id) : null)
+  Promise.resolve(req.payload ? getUser(req) : null)
     .then(function (user) {
       return req.article
         .populate({
@@ -309,7 +307,7 @@ router.get("/:article/comments", auth.optional, function (req, res, next) {
 
 // create a new comment
 router.post("/:article/comments", auth.required, function (req, res, next) {
-  User.findById(req.payload.id)
+  getUser(req)
     .then(function (user) {
       if (!user) {
         return res.sendStatus(401);
