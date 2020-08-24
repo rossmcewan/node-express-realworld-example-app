@@ -11,7 +11,7 @@ const getPublicKeys = async (issuer)=>{
     const url = `${issuer}/.well-known/jwks.json`
     const publicKeys = await Axios.default.get(url);
     cacheKeys = publicKeys.data.keys.reduce((agg, current) => {
-      const pem = jwkToPem(current);
+      let pem = jwkToPem(current);
       agg[current.kid] = {instance: current, pem};
       return agg;
     },{});
@@ -28,7 +28,7 @@ const secret = (req, header, payload, callback)=>{
   console.log('header', header);
   console.log('payload', payload);
   getPublicKeys(payload.iss).then(publicKeys=>{
-    const key = publicKeys[header.kid];
+    let key = publicKeys[header.kid];
     if(!key){
       throw new Error('claim made for unknown kid')
     }
