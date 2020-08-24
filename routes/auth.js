@@ -1,10 +1,29 @@
 var jwt = require('express-jwt');
 var configSecret = require('../config').secret;
+var Axios = require('axios')
+var jsonwebtoken = require('jsonwebtoken');
+
+const cacheKeys = undefined;
+
+const getPublicKeys = async (issuer)=>{
+  if(!cacheKeys){
+    const url = `${issuer}/.well-known/jwks.json`
+    const publicKeys = await Axios.default.get(url);
+    cacheKeys = publicKeys.data.keys.reduce((agg, current) => {
+      const pem = jwkToPem(current);
+      agg[current.kid] = {instance: current, pem};
+      return agg;
+    },{});
+    return cacheKeys;
+  }else{
+    return cacheKeys;
+  }
+}
 
 const secret = (req, header, payload, callback)=>{
-  console.log('req', req);
-  console.log('header', header);
-  console.log('payload', payload);
+  console.log('req', JSON.stringify(req));
+  console.log('header', JSON.stringify(header));
+  console.log('payload', JSON.stringify(payload));
   return callback(configSecret)
 }
 
