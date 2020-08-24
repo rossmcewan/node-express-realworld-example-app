@@ -97,7 +97,7 @@ router.get('/feed', auth.required, function(req, res, next) {
   if(typeof req.query.offset !== 'undefined'){
     offset = req.query.offset;
   }
-
+  console.log('req.payload', req.payload);
   User.findById(req.payload.id).then(function(user){
     if (!user) { return res.sendStatus(401); }
 

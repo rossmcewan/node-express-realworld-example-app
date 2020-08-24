@@ -22,20 +22,13 @@ const getPublicKeys = async (issuer)=>{
 }
 
 const secret = (req, header, payload, callback)=>{
-  console.log('req', req);
-  console.log('req.headers', req.headers);
-  console.log('req.header', req.header);
-  console.log('header', header);
-  console.log('payload', payload);
   getPublicKeys(payload.iss).then(publicKeys=>{
     const key = publicKeys[header.kid];
     if(!key){
       throw new Error('claim made for unknown kid')
     }
-    console.log('have key', key);
     return callback(key.pem);
   })
-  // return callback(configSecret)
 }
 
 function getTokenFromHeader(req){
