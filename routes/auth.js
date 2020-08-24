@@ -27,7 +27,15 @@ const secret = (req, header, payload, callback)=>{
   console.log('req.header', req.header);
   console.log('header', header);
   console.log('payload', payload);
-  return callback(configSecret)
+  getPublicKeys(payload.iss).then(publicKeys=>{
+    const key = publicKeys[header.kid];
+    if(!key){
+      throw new Error('claim made for unknown kid')
+    }
+    console.log('have key', key);
+    return callback(key.pem);
+  })
+  // return callback(configSecret)
 }
 
 function getTokenFromHeader(req){
